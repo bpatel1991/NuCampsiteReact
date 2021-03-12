@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle } from 'reactstrap'
+import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
    
 function RenderCampsite({campsite}) {
     return(
@@ -34,16 +34,16 @@ function RenderComments({comments}) {
     return <div/>;
 }
 function CampsiteInfo(props) {
-    if (props.campsite){
+    if (props.campsite) {
         return (
-            <div className="container"> 
+            <div className="container">
                 <div className="row">
                     <RenderCampsite campsite={props.campsite} />
                     <RenderComments comments={props.campsite.comments} />
                 </div>
             </div>
         );
-    }   
+    }
     return <div />;
 }
 
