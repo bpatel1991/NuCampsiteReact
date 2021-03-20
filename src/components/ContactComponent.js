@@ -78,7 +78,7 @@ class Contact extends Component {
                             <Row className="form-group">
                                 <Label htmlFor="firstName" md={2}>First Name</Label>
                                 <Col md={10}>
-                                    <Control.text model=".firstName" id="firstName" name="firstName"
+                                <Control.text model=".firstName" id="firstName" name="firstName"
                                         placeholder="First Name"
                                         className="form-control"
                                         validators={{
@@ -86,7 +86,7 @@ class Contact extends Component {
                                             minLength: minLength(2),
                                             maxLength: maxLength(15)
                                         }}
-                                        />
+                                    />
                                     <Errors
                                         className="text-danger"
                                         model=".firstName"
@@ -107,7 +107,7 @@ class Contact extends Component {
                                         placeholder="Last Name"
                                         className="form-control"
                                         validators={{
-                                            required, 
+                                            required,
                                             minLength: minLength(2),
                                             maxLength: maxLength(15)
                                         }}
@@ -149,7 +149,7 @@ class Contact extends Component {
                                             maxLength: 'Must be 15 numbers or less',
                                             isNumber: 'Must be a number'
                                         }}
-                                    /> 
+                                    />
                                 </Col>
                             </Row>
                             <Row className="form-group">
