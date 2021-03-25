@@ -9,7 +9,7 @@ import Contact from './ContactComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from 'react-redux-form'; //makes action creator named actions.reset available//
-import { addComment, fetchCampsites } from '../redux/ActionCreators';
+import { addComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
@@ -22,14 +22,18 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
     addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),
-    fetchCampsites: () => (fetchCampsites()), //arrow function, call fetchCampsites action creator//
-    resetFeedbackForm: () => (actions.reset('feedbackForm'))
+    fetchCampsites: () => (fetchCampsites()),
+    resetFeedbackForm: () => (actions.reset('feedbackForm')),
+    fetchComments: () => (fetchComments()),
+    fetchPromotions: () => (fetchPromotions())
 };
 
 class Main extends Component {
  
-    componentDidMount() { //Lifecycle methods, like render method//
+    componentDidMount() {
         this.props.fetchCampsites();
+        this.props.fetchComments();
+        this.props.fetchPromotions();
     }
 
     render() {
@@ -37,10 +41,12 @@ class Main extends Component {
         const HomePage = () => {
             return (
                 <Home
-                    campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]} //accessing campsite's array and object inside array (campsites)//
-                    campsitesLoading={this.props.campsites.isLoading} //access loading//
-                    campsitesErrMess={this.props.campsites.errMess} //access error message//
-                    promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
+                    campsitesLoading={this.props.campsites.isLoading}
+                    campsitesErrMess={this.props.campsites.errMess}
+                    promotion={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]}
+                    promotionLoading={this.props.promotions.isLoading}
+                    promotionErrMess={this.props.promotions.errMess}
                     partner={this.props.partners.filter(partner => partner.featured)[0]}
                 />
             );
@@ -48,13 +54,14 @@ class Main extends Component {
 
         const CampsiteWithId = ({match}) => {
             return (
-                <CampsiteInfo 
-                    campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]} //accessing campsite's array and object inside array (campsites)//
-                    isLoading={this.props.campsites.isLoading} //is loading//
-                    errMess={this.props.campsites.errMess} //error message//
-                    comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
+                <CampsiteInfo
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}
+                    isLoading={this.props.campsites.isLoading}
+                    errMess={this.props.campsites.errMess}
+                    comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)}
+                    commentsErrMess={this.props.comments.errMess}
                     addComment={this.props.addComment}
-                />
+                />   
             );
         };
 

@@ -1,6 +1,5 @@
 import * as ActionTypes from './ActionTypes';
-import { CAMPSITES } from '../shared/campsites';
-
+import { baseUrl } from '../shared/baseUrl';
 
 export const addComment = (campsiteId, rating, author, text) => ({
     type: ActionTypes.ADD_COMMENT,
@@ -11,15 +10,17 @@ export const addComment = (campsiteId, rating, author, text) => ({
         text: text
     }
 });
-//nested an arrow function inside an arrow function below//
+//call to fetch that returns result//
+
+//converts JSON to javascript, array for campsites//
 export const fetchCampsites = () => dispatch => {
-
     dispatch(campsitesLoading());
-
-    setTimeout(() => {
-        dispatch(addCampsites(CAMPSITES));
-    }, 2000);
+//give fetch a URL (base URL for json server + campsite(location for the resource we want))//
+    return fetch(baseUrl + 'campsites')
+        .then(response => response.json()) //chain then method, returns a promise, uses json method to convert response from json to javascript//
+        .then(campsites => dispatch(addCampsites(campsites))); //chain another then method here, take javascript array from this campsite's argument once previous promise resolves. Then, dispatch that campsite's argument with addCampsites action creator to be used as its payload//
 };
+
 //one arrow, standard action creator, no payload, just type. not thunk, goes straight to reducer as normal//
 export const campsitesLoading = () => ({
     type: ActionTypes.CAMPSITES_LOADING
@@ -33,4 +34,44 @@ export const campsitesFailed = errMess => ({
 export const addCampsites = campsites => ({
     type: ActionTypes.ADD_CAMPSITES,
     payload: campsites
+});
+
+//action creator: fetch call for comments. should return promise for array of comments objects. if fetch was successful, use json method to convert to JS array. Then, dispatch addComments to add comments to Redux store//
+export const fetchComments = () => dispatch => {    
+    return fetch(baseUrl + 'comments')
+        .then(response => response.json())
+        .then(comments => dispatch(addComments(comments)));
+};
+//one arrow function. comments failed action creator. parameter of errMess, creates object with type of actiontypes.comments_failed, with payload containing error message.//
+export const commentsFailed = errMess => ({
+    type: ActionTypes.COMMENTS_FAILED,
+    payload: errMess
+});
+//one arrow function. add comments action creator. parameter of comments, creates object with type of actiontypes.add_comments, with payload containing argument passed in as comments//
+export const addComments = comments => ({
+    type: ActionTypes.ADD_COMMENTS,
+    payload: comments
+});
+//thunked action creator for promotions. 
+export const fetchPromotions = () => dispatch => {
+    dispatch(promotionsLoading());
+
+    return fetch(baseUrl + 'promotions')
+        .then(response => response.json())
+        .then(promotions => dispatch(addPromotions(promotions)));
+};
+//one arrow function. promotions loading action creator//
+export const promotionsLoading = () => ({
+    type: ActionTypes.PROMOTIONS_LOADING
+});
+//one arrow function. promotions failed action creator//
+
+export const promotionsFailed = errMess => ({
+    type: ActionTypes.PROMOTIONS_FAILED,
+    payload: errMess
+});
+//one arrow function. promotions loading action creator//
+export const addPromotions = promotions => ({
+    type: ActionTypes.ADD_PROMOTIONS,
+    payload: promotions
 });
