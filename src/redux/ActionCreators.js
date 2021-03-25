@@ -17,8 +17,24 @@ export const fetchCampsites = () => dispatch => {
     dispatch(campsitesLoading());
 //give fetch a URL (base URL for json server + campsite(location for the resource we want))//
     return fetch(baseUrl + 'campsites')
+        .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => {
+            const errMess = new Error(error.message);
+            throw errMess;
+        }
+    )    
         .then(response => response.json()) //chain then method, returns a promise, uses json method to convert response from json to javascript//
-        .then(campsites => dispatch(addCampsites(campsites))); //chain another then method here, take javascript array from this campsite's argument once previous promise resolves. Then, dispatch that campsite's argument with addCampsites action creator to be used as its payload//
+        .then(campsites => dispatch(addCampsites(campsites))) //chain another then method here, take javascript array from this campsite's argument once previous promise resolves. Then, dispatch that campsite's argument with addCampsites action creator to be used as its payload//
+        .catch(error => dispatch(campsitesFailed(error.message)));
+
 };
 
 //one arrow, standard action creator, no payload, just type. not thunk, goes straight to reducer as normal//
@@ -37,10 +53,25 @@ export const addCampsites = campsites => ({
 });
 
 //action creator: fetch call for comments. should return promise for array of comments objects. if fetch was successful, use json method to convert to JS array. Then, dispatch addComments to add comments to Redux store//
-export const fetchComments = () => dispatch => {    
+export const fetchComments = () => dispatch => {
     return fetch(baseUrl + 'comments')
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
         .then(response => response.json())
-        .then(comments => dispatch(addComments(comments)));
+        .then(comments => dispatch(addComments(comments)))
+        .catch(error => dispatch(commentsFailed(error.message)));
 };
 //one arrow function. comments failed action creator. parameter of errMess, creates object with type of actiontypes.comments_failed, with payload containing error message.//
 export const commentsFailed = errMess => ({
@@ -57,8 +88,23 @@ export const fetchPromotions = () => dispatch => {
     dispatch(promotionsLoading());
 
     return fetch(baseUrl + 'promotions')
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
         .then(response => response.json())
-        .then(promotions => dispatch(addPromotions(promotions)));
+        .then(promotions => dispatch(addPromotions(promotions)))
+        .catch(error => dispatch(promotionsFailed(error.message)));
 };
 //one arrow function. promotions loading action creator//
 export const promotionsLoading = () => ({
