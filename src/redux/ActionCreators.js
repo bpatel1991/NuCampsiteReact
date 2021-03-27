@@ -137,6 +137,7 @@ export const fetchPromotions = () => dispatch => {
         .then(promotions => dispatch(addPromotions(promotions)))
         .catch(error => dispatch(promotionsFailed(error.message)));
 };
+
 //one arrow function. promotions loading action creator//
 export const promotionsLoading = () => ({
     type: ActionTypes.PROMOTIONS_LOADING
@@ -147,8 +148,78 @@ export const promotionsFailed = errMess => ({
     type: ActionTypes.PROMOTIONS_FAILED,
     payload: errMess
 });
-//one arrow function. promotions loading action creator//
+//one arrow function. partners loading action creator//
 export const addPromotions = promotions => ({
     type: ActionTypes.ADD_PROMOTIONS,
     payload: promotions
 });
+
+//partners thunked action creator//
+export const fetchPartners = () => dispatch => {
+    dispatch(partnersLoading());
+
+    return fetch(baseUrl + 'partners')
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
+        .then(response => response.json())
+        .then(partners => dispatch(addPartners(partners)))
+        .catch(error => dispatch(partnersFailed(error.message)));
+};
+
+//one arrow function. partners  loading action creator//
+export const partnersLoading = () => ({
+    type: ActionTypes.PARTNERS_LOADING
+});
+//one arrow function. partners  failed action creator//
+
+export const partnersFailed = errMess => ({
+    type: ActionTypes.PARTNERS_FAILED,
+    payload: errMess
+});
+//one arrow function. partners loading action creator//
+export const addPartners = partners => ({
+    type: ActionTypes.ADD_PARTNERS,
+    payload: partners
+});
+
+//Task 2: Action Creator postFeedback//
+export const postFeedback = feedback => () => {
+    return fetch(baseUrl + 'feedback', {
+        method: 'POST',
+        body: JSON.stringify(feedback),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; })
+        .then(response => response.json())
+        .then(response => { 
+            console.log('Feedback: ', response); 
+            alert('Thank you for your feedback!\n' + JSON.stringify(response));
+        })
+        .catch(error => { 
+            console.log('Feedback: ', error.message);
+            alert('Your feedback could not be posted\nError: ' + error.message);
+        });
+};
